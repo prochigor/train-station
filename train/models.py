@@ -5,6 +5,9 @@ from django.db import models
 class TrainType(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Train(models.Model):
     name = models.CharField(max_length=255)
@@ -16,11 +19,17 @@ class Train(models.Model):
         related_name="trains"
     )
 
+    def __str__(self):
+        return self.name
+
 
 class Station(models.Model):
     name = models.CharField(max_length=255)
     latitude = models.FloatField()
     longitude = models.FloatField()
+
+    def __str__(self):
+        return self.name
 
 
 class Route(models.Model):
@@ -36,6 +45,10 @@ class Route(models.Model):
     )
     distance = models.IntegerField()
 
+    def __str__(self):
+        return (f"{self.source.name}-{self.destination.name},"
+                f" distance: {self.distance}")
+
 
 class Journey(models.Model):
     route = models.ForeignKey(
@@ -48,6 +61,15 @@ class Journey(models.Model):
         on_delete=models.CASCADE,
         related_name="journeys"
     )
+    departure_time = models.DateTimeField()
+    arrival_time = models.DateTimeField()
+
+    def __str__(self):
+        return (
+            f"Route: {self.route}, train: {self.train.name},"
+            f" departure time: {self.departure_time},"
+            f" arrival_time: {self.arrival_time}"
+        )
 
 
 class Order(models.Model):
@@ -76,3 +98,10 @@ class Ticket(models.Model):
         on_delete=models.CASCADE,
         related_name="tickets"
     )
+
+    def __str__(self):
+        return (
+            f"Cargo: {self.cargo}, seat: {self.seat}, "
+            f"journey: {self.journey.route}, "
+            f"order № {self.order.id}, {self.order.created_at}"
+        )
