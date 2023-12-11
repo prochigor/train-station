@@ -19,6 +19,10 @@ class Train(models.Model):
         related_name="trains"
     )
 
+    @property
+    def seats_in_train(self) -> int:
+        return self.cargo_num * self.places_in_cargo
+
     def __str__(self):
         return self.name
 
@@ -41,7 +45,6 @@ class Route(models.Model):
     destination = models.ForeignKey(
         Station,
         on_delete=models.CASCADE,
-        related_name="routes"
     )
     distance = models.IntegerField()
 
