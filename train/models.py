@@ -54,10 +54,18 @@ class Route(models.Model):
         return f"{self.source.name}-{self.destination.name}"
 
     @staticmethod
-    def validate_route(source, destination, error_to_raise):
+    def validate_route(source, destination, distance, error_to_raise):
         if source == destination:
             raise error_to_raise(
                 "Source and destination must be difference"
+            )
+        distance_x = (source.latitude - destination.latitude) ** 2
+        distance_y = (source.longitude - destination.longitude) ** 2
+        straight_distance = (distance_x + distance_y) ** 0.5
+
+        if straight_distance > distance:
+            raise error_to_raise(
+                f"Distance can't be less than {straight_distance}"
             )
 
     def clean(self):

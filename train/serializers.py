@@ -63,6 +63,7 @@ class RouteSerializer(serializers.ModelSerializer):
         Route.validate_route(
             attrs["source"],
             attrs["destination"],
+            attrs["distance"],
             ValidationError
         )
         return data
