@@ -53,6 +53,20 @@ class Route(models.Model):
     def route(self):
         return f"{self.source.name}-{self.destination.name}"
 
+    @staticmethod
+    def validate_route(source, destination, error_to_raise):
+        if source == destination:
+            raise error_to_raise(
+                "Source and destination must be difference"
+            )
+
+    def clean(self):
+        Route.validate_route(
+            self.source,
+            self.destination,
+            ValidationError,
+        )
+
     def __str__(self):
         return (f"{self.source.name}-{self.destination.name},"
                 f" distance: {self.distance}")
@@ -88,10 +102,6 @@ class Journey(models.Model):
         blank=True,
         related_name="journeys"
     )
-
-    @property
-    def journey_time(self):
-        return self.arrival_time - self.departure_time
 
     def __str__(self):
         return (
@@ -145,10 +155,11 @@ class Ticket(models.Model):
             if not (1 <= ticket_attr_value <= count_attrs):
                 raise error_to_raise(
                     {
-                        ticket_attr_name: f"{ticket_attr_name} "
-                                          f"number must be in available range: "
-                                          f"(1, {train_attr_name}): "
-                                          f"(1, {count_attrs})"
+                        ticket_attr_name: (
+                            f"{ticket_attr_name} "
+                            f"number must be in available range: "
+                            f"(1, {train_attr_name}): (1, {count_attrs})"
+                        )
                     }
                 )
 
@@ -161,11 +172,11 @@ class Ticket(models.Model):
         )
 
     def save(
-        self,
-        force_insert=False,
-        force_update=False,
-        using=None,
-        update_fields=None,
+            self,
+            force_insert=False,
+            force_update=False,
+            using=None,
+            update_fields=None,
     ):
         self.full_clean()
         return super(Ticket, self).save(

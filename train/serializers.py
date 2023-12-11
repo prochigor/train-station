@@ -8,7 +8,9 @@ from train.models import (
     Station,
     Route,
     Crew,
-    Journey, Ticket, Order,
+    Journey,
+    Ticket,
+    Order,
 )
 
 
@@ -56,6 +58,15 @@ class StationSerializer(serializers.ModelSerializer):
 
 class RouteSerializer(serializers.ModelSerializer):
 
+    def validate(self, attrs):
+        data = super(RouteSerializer, self).validate(attrs=attrs)
+        Route.validate_route(
+            attrs["source"],
+            attrs["destination"],
+            ValidationError
+        )
+        return data
+
     class Meta:
         model = Route
         fields = ("id", "source", "destination", "distance")
@@ -95,7 +106,7 @@ class JourneySerializer(serializers.ModelSerializer):
             "train",
             "departure_time",
             "arrival_time",
-            "crew"
+            "crew",
         )
 
 
@@ -115,7 +126,6 @@ class JourneyListSerializer(JourneySerializer):
             "departure_time",
             "arrival_time",
             "crew",
-
         )
 
 
