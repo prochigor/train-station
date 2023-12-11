@@ -1,4 +1,6 @@
 from rest_framework import viewsets, mixins
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 
 from train.models import (
@@ -6,7 +8,7 @@ from train.models import (
     Train,
     Station,
     Route,
-    Crew, Journey,
+    Crew, Journey, Order,
 )
 from train.serializers import (
     TrainTypeSerializer,
@@ -18,7 +20,12 @@ from train.serializers import (
     RouteSerializer,
     RouteDetailSerializer,
     CrewListSerializer,
-    CrewSerializer, JourneySerializer, JourneyListSerializer, JourneyDetailSerializer,
+    CrewSerializer,
+    JourneySerializer,
+    JourneyListSerializer,
+    JourneyDetailSerializer,
+    OrderSerializer, OrderListSerializer,
+    # OrderListSerializer,
 )
 
 
@@ -97,3 +104,34 @@ class JourneyViewSet(viewsets.ModelViewSet):
             return JourneyDetailSerializer
 
         return JourneySerializer
+
+
+class OrderPagination(PageNumberPagination):
+    page_size = 10
+    max_page_size = 100
+
+
+class OrderViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    GenericViewSet,
+):
+    queryset = Order.objects.all()
+    # queryset = Order.objects.prefetch_related(
+    #     "tickets__journey__train", "tickets__journey"
+    # )
+    serializer_class = OrderSerializer
+    pagination_class = OrderPagination
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return OrderListSerializer
+
+        return OrderSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
