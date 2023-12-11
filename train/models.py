@@ -105,3 +105,7 @@ class Ticket(models.Model):
             f"journey: {self.journey.route}, "
             f"order № {self.order.id}, {self.order.created_at}"
         )
+
+    class Meta:
+        unique_together = ("cargo", "seat", "journey")
+        ordering = ["cargo", "seat"]
