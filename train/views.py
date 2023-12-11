@@ -6,6 +6,7 @@ from train.models import (
     Train,
     Station,
     Route,
+    Crew,
 )
 from train.serializers import (
     TrainTypeSerializer,
@@ -16,6 +17,8 @@ from train.serializers import (
     RouteListSerializer,
     RouteSerializer,
     RouteDetailSerializer,
+    CrewListSerializer,
+    CrewSerializer,
 )
 
 
@@ -51,7 +54,7 @@ class StationViewSet(
     serializer_class = StationSerializer
 
 
-class RouteListViewSet(viewsets.ModelViewSet):
+class RouteViewSet(viewsets.ModelViewSet):
 
     queryset = Route.objects.all()
 
@@ -63,3 +66,14 @@ class RouteListViewSet(viewsets.ModelViewSet):
             return RouteDetailSerializer
 
         return RouteSerializer
+
+
+class CrewViewSet(viewsets.ModelViewSet):
+
+    queryset = Crew.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return CrewListSerializer
+
+        return CrewSerializer
