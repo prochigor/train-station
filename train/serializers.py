@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from train.models import (
     TrainType,
-    Train,
+    Train, Station,
 )
 
 
@@ -19,14 +19,17 @@ class TrainTypeSerializer(serializers.Serializer):
         return instance
 
 
-class TrainSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    cargo_num = serializers.IntegerField(required=True)
-    places_in_cargo = serializers.IntegerField(required=True)
-    train_type = serializers.PrimaryKeyRelatedField(
-        queryset=TrainType.objects.all(), required=False, many=False,
-    )
-    seats_in_train = serializers.IntegerField(required=False)
+class TrainSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Train
+        fields = (
+            "id",
+            "cargo_num",
+            "places_in_cargo",
+            "train_type",
+            "seats_in_train"
+        )
 
 
 class TrainListSerializer(TrainSerializer):
@@ -37,3 +40,10 @@ class TrainListSerializer(TrainSerializer):
 
 class TrainDetailSerializer(TrainSerializer):
     train_type = TrainTypeSerializer(many=False, read_only=True)
+
+
+class StationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Station
+        fields = ("name", "latitude", "longitude")

@@ -16,7 +16,7 @@ class Train(models.Model):
     train_type = models.ForeignKey(
         TrainType,
         on_delete=models.CASCADE,
-        related_name="trains"
+        related_name="trains",
     )
 
     @property
