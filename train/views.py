@@ -13,6 +13,7 @@ from train.models import (
     Journey,
     Order,
 )
+from train.permissions import IsAdminOrIfAuthenticatedReadOnly
 from train.serializers import (
     TrainTypeSerializer,
     TrainListSerializer,
@@ -43,12 +44,19 @@ class TrainTypeViewSet(
 
 class TrainViewSet(viewsets.ModelViewSet):
     queryset = Train.objects.all()
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_queryset(self):
         queryset = self.queryset
-        if self.action == "list" or self.action == "retrieve":
+        train_type = self.request.query_params.get("train_type")
+
+        if train_type:
+            queryset = queryset.filter(train_type__name__icontains=train_type)
+
+        if self.action in ("list", "retrieve"):
             queryset = queryset.select_related("train_type")
-        return queryset
+
+        return queryset.distinct()
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -67,13 +75,27 @@ class StationViewSet(
 ):
     queryset = Station.objects.all()
     serializer_class = StationSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class RouteViewSet(viewsets.ModelViewSet):
     queryset = Route.objects.all()
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_queryset(self):
         queryset = self.queryset
+
+        source = self.request.query_params.get("source")
+        destination = self.request.query_params.get("destination")
+
+        if source:
+            queryset = queryset.filter(source__name__icontains=source)
+
+        if destination:
+            queryset = queryset.filter(
+                destination__name__icontains=destination
+            )
+
         if self.action == "list":
             queryset = queryset.select_related("source", "destination")
         return queryset
@@ -96,6 +118,7 @@ class CrewViewSet(
     GenericViewSet,
 ):
     queryset = Crew.objects.all()
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -107,24 +130,36 @@ class CrewViewSet(
 class JourneyViewSet(viewsets.ModelViewSet):
     queryset = Journey.objects.all()
     serializer_class = JourneySerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_queryset(self):
         queryset = self.queryset
+
+        source = self.request.query_params.get("source")
+        destination = self.request.query_params.get("destination")
+
+        if source:
+            queryset = queryset.filter(route__source__name__icontains=source)
+
+        if destination:
+            queryset = queryset.filter(
+                route__destination__name__icontains=destination
+            )
+
         if self.action == "list" or self.action == "retrieve":
-            queryset = (queryset.prefetch_related("crew").
-                        select_related(
+            queryset = (queryset.prefetch_related("crew").select_related(
                 "route",
                 "train",
                 "route__source",
                 "route__destination",
                 "train__train_type",
-            )).distinct().annotate(
+            )).annotate(
                 tickets_available=(
                         F("train__cargo_num") * F("train__places_in_cargo")
                         - Count("tickets")
                 )
             )
-        return queryset
+        return queryset.distinct()
 
     def get_serializer_class(self):
         if self.action == "list":
