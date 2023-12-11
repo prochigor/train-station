@@ -3,14 +3,16 @@ from rest_framework import routers
 
 from train.views import (
     TrainTypeViewSet,
-    TrainListViewSet,
+    TrainViewSet,
     StationViewSet,
+    RouteListViewSet,
 )
 
 router = routers.DefaultRouter()
 router.register("train_types", TrainTypeViewSet)
-router.register("trains", TrainListViewSet)
+router.register("trains", TrainViewSet)
 router.register("stations", StationViewSet)
+router.register("routes", RouteListViewSet)
 
 
 urlpatterns = [
