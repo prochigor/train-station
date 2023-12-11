@@ -50,6 +50,15 @@ class Route(models.Model):
                 f" distance: {self.distance}")
 
 
+class Crew(models.Model):
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
+
 class Journey(models.Model):
     route = models.ForeignKey(
         Route,
@@ -63,6 +72,11 @@ class Journey(models.Model):
     )
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
+    crew = models.ManyToManyField(
+        Crew,
+        blank=True,
+        related_name="journeys"
+    )
 
     def __str__(self):
         return (
