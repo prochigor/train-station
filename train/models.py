@@ -65,6 +65,9 @@ class Crew(models.Model):
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
 
+    def __str__(self):
+        return self.full_name
+
 
 class Journey(models.Model):
     route = models.ForeignKey(
@@ -84,6 +87,10 @@ class Journey(models.Model):
         blank=True,
         related_name="journeys"
     )
+
+    @property
+    def journey_time(self):
+        return self.arrival_time - self.departure_time
 
     def __str__(self):
         return (
