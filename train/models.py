@@ -72,6 +72,7 @@ class Route(models.Model):
         Route.validate_route(
             self.source,
             self.destination,
+            self.distance,
             ValidationError,
         )
 
@@ -110,6 +111,20 @@ class Journey(models.Model):
         blank=True,
         related_name="journeys"
     )
+
+    @staticmethod
+    def validate_journey(departure_time, arrival_time, error_to_raise):
+        if departure_time >= arrival_time:
+            raise error_to_raise(
+                "Departure time must be greater than arrival time"
+            )
+
+    def clean(self):
+        Journey.validate_journey(
+            self.departure_time,
+            self.arrival_time,
+            ValidationError,
+        )
 
     def __str__(self):
         return (

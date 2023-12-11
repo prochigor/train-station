@@ -99,6 +99,15 @@ class CrewListSerializer(CrewSerializer):
 
 class JourneySerializer(serializers.ModelSerializer):
 
+    def validate(self, attrs):
+        data = super(JourneySerializer, self).validate(attrs=attrs)
+        Journey.validate_journey(
+            attrs["departure_time"],
+            attrs["arrival_time"],
+            ValidationError
+        )
+        return data
+
     class Meta:
         model = Journey
         fields = (
