@@ -55,8 +55,8 @@ admin panel, where you can use all CRUD possibilities, if you have a permission.
 
 1) Install docker if don't have.
 
-2) pull docker container
-`docker pull prochihor/tarin_station-app`
+2) pull docker container or download from git
+`docker pull prochihor/tarin-station-app`
 
 3) run container
 `docker-compose build`
