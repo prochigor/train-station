@@ -1,4 +1,5 @@
 from django.db.models import F, Count
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, mixins, status
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
@@ -31,7 +32,8 @@ from train.serializers import (
     JourneyListSerializer,
     JourneyDetailSerializer,
     OrderSerializer,
-    OrderListSerializer, TrainImageSerializer,
+    OrderListSerializer,
+    TrainImageSerializer,
 )
 
 
@@ -59,6 +61,19 @@ class TrainViewSet(viewsets.ModelViewSet):
             queryset = queryset.select_related("train_type")
 
         return queryset.distinct()
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "train_type",
+                type=str,
+                description="Filter by train_type (ex. ?train_type=Train A)",
+                required=False,
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -120,6 +135,25 @@ class RouteViewSet(viewsets.ModelViewSet):
         if self.action == "list":
             queryset = queryset.select_related("source", "destination")
         return queryset
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "source",
+                type=str,
+                description="Filter by source (ex. ?source=Bar)",
+                required=False,
+            ),
+            OpenApiParameter(
+                "destination",
+                type=str,
+                description="Filter by destination (ex. ?destination=Bar)",
+                required=False,
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -186,6 +220,30 @@ class JourneyViewSet(viewsets.ModelViewSet):
                 )
             )
         return queryset.distinct()
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "source",
+                type=str,
+                description="Filter by source (ex. ?source=Bar)",
+                required=False,
+            ),
+            OpenApiParameter(
+                "destination",
+                type=str,
+                description="Filter by destination (ex. ?destination=Bar)",
+                required=False,
+            ),
+            OpenApiParameter(
+                "trains_type",
+                type={"type": "list", "items": {"type": "number"}},
+                description="Filter by trains_type ids (ex. ?trains_type=1,3)"
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
     def get_serializer_class(self):
         if self.action == "list":
