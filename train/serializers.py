@@ -28,6 +28,7 @@ class TrainTypeSerializer(serializers.Serializer):
 
 
 class TrainSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(read_only=True)
 
     class Meta:
         model = Train
@@ -37,7 +38,8 @@ class TrainSerializer(serializers.ModelSerializer):
             "cargo_num",
             "places_in_cargo",
             "train_type",
-            "seats_in_train"
+            "seats_in_train",
+            "image",
         )
 
 
@@ -47,6 +49,12 @@ class TrainListSerializer(TrainSerializer):
 
 class TrainDetailSerializer(TrainSerializer):
     train_type = TrainTypeSerializer(many=False, read_only=True)
+
+
+class TrainImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Train
+        fields = ("id", "image",)
 
 
 class StationSerializer(serializers.ModelSerializer):
