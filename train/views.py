@@ -137,6 +137,7 @@ class JourneyViewSet(viewsets.ModelViewSet):
 
         source = self.request.query_params.get("source")
         destination = self.request.query_params.get("destination")
+        trains_type = self.request.query_params.get("trains")
 
         if source:
             queryset = queryset.filter(route__source__name__icontains=source)
@@ -145,6 +146,10 @@ class JourneyViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(
                 route__destination__name__icontains=destination
             )
+
+        if trains_type:
+            trains_ids = [int(str_id) for str_id in trains_type.split(",")]
+            queryset = queryset.filter(train__train_type_id__in=trains_ids)
 
         if self.action == "list" or self.action == "retrieve":
             queryset = (queryset.prefetch_related("crew").select_related(
