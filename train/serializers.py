@@ -106,6 +106,7 @@ class CrewListSerializer(CrewSerializer):
 
 
 class JourneySerializer(serializers.ModelSerializer):
+    train_image = serializers.ImageField(source="train.image", read_only=True)
 
     def validate(self, attrs):
         data = super(JourneySerializer, self).validate(attrs=attrs)
@@ -125,6 +126,7 @@ class JourneySerializer(serializers.ModelSerializer):
             "departure_time",
             "arrival_time",
             "crew",
+            "train_image"
         )
 
 
@@ -145,7 +147,8 @@ class JourneyListSerializer(JourneySerializer):
             "departure_time",
             "arrival_time",
             "crew",
-            "tickets_available"
+            "tickets_available",
+            "train_image"
         )
 
 
