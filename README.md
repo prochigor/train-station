@@ -1,7 +1,6 @@
 # train-station
 
-
-
+    
 ## Description
 In this api you can manage proces on the train station, users can read information about stations, routes,
 trains with types and journey (Data type format: `YYYY-mm-dd hh:mm`) with general information, but only admins can 
@@ -12,7 +11,7 @@ admin panel, where you can use all CRUD possibilities, if you have a permission.
 
 ## Guideline how to use
 
-1) Open terminal and clone the repo (`git clone `)
+1) Open terminal and clone the repo (`git clone https://github.com/prochigor/train-station.git`)
 
 2) Open cloned folder
 
