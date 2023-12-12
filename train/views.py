@@ -44,6 +44,7 @@ class TrainTypeViewSet(
 ):
     queryset = TrainType.objects.all()
     serializer_class = TrainTypeSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class TrainViewSet(viewsets.ModelViewSet):
