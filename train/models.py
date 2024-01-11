@@ -1,10 +1,8 @@
-import os
-import uuid
-
 from django.conf import settings
 from django.db import models
-from django.utils.text import slugify
 from rest_framework.exceptions import ValidationError
+
+from file_path import train_image_file_path
 
 
 class TrainType(models.Model):
@@ -12,14 +10,6 @@ class TrainType(models.Model):
 
     def __str__(self):
         return self.name
-
-
-def train_image_file_path(instance, filename):
-    _, extension = os.path.splitext(filename)
-    return os.path.join(
-        "uploads/trains/",
-        f"{slugify(instance.name)}-{uuid.uuid4()}{extension}"
-    )
 
 
 class Train(models.Model):
