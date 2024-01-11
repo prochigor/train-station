@@ -2,10 +2,11 @@
 
     
 ## Description
-In this api you can manage proces on the train station, users can read information about stations, routes,
-trains with types and journey (Data type format: `YYYY-mm-dd hh:mm`) with general information, but only admins can 
-create new elements, but everything can create new orders with tickets. To update or delete info, you can use 
-admin panel, where you can use all CRUD possibilities, if you have a permission. Welcome to train station.
+In this API you can manage processes on the train station, users can read information about stations,
+routes, and trains with types and journeys (Data type format: YYYY-mm-dd hh:mm) with general information,
+but only admins can create new elements, but everything can create new orders with tickets.
+To update or delete info, you can use the admin panel, where you can use all CRUD possibilities
+if you have permission. Welcome to the train station.
 
 # You can see all endpoints to api here `http://127.0.0.1:8000/api/doc/swagger/`
 
@@ -43,7 +44,8 @@ admin panel, where you can use all CRUD possibilities, if you have a permission.
 
 6)  Create user on terminal: 
 - Write on terminal `python manage.py createsuperuser`
-`Examle data`
+
+Example data
 - `email: admin@user.com`
 - `Password: 1qazcde3`
 
